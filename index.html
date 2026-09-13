@@ -1,0 +1,143 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TAMA Store</title>
+  <meta name="description" content="TAMA Store — katalog akun digital dengan informasi lengkap dan live chat admin.">
+  <link rel="icon" href="/assets/banner.png">
+  <link rel="stylesheet" href="/css/style.css">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="/api/config"></script>
+</head>
+<body>
+  <div id="toast" class="toast" aria-live="polite"></div>
+  <header class="topbar">
+    <div class="brand"><span>TAMA STORE</span></div>
+    <div class="top-actions">
+      <button id="themeBtn" class="icon-btn" title="Ganti tema" aria-label="Ganti tema">◐</button>
+      <button id="menuBtn" class="icon-btn menu-btn" title="Buka menu" aria-label="Buka menu"><span></span><span></span><span></span></button>
+    </div>
+  </header>
+
+  <nav id="siteMenu" class="site-menu hidden" aria-label="Menu">
+    <a href="https://whatsapp.com/channel/0029Vb6F8TTDZ4LiVouR9H24" target="_blank" rel="noopener">Community</a>
+    <a href="http://tiktok.com/@tamastorebna" target="_blank" rel="noopener">TikTok</a>
+    <a href="https://wa.me/62895391845923" target="_blank" rel="noopener">WhatsApp</a>
+  </nav>
+
+  <main>
+    <section class="hero-wrap">
+      <img src="/assets/banner.png" alt="Banner TAMA" class="hero-banner">
+    </section>
+
+    <section class="controls container">
+      <div class="intro-row">
+        <div>
+          <p class="eyebrow">TAMA ACCOUNT STORE</p>
+          <h1>Temukan akun yang sesuai kebutuhan kamu.</h1>
+          <p class="muted">Pilih produk, buka info lengkap untuk melihat deskripsi dan foto spek tambahan.</p>
+        </div>
+        <div class="search-box">
+          <span>⌕</span>
+          <input id="searchInput" type="search" placeholder="Ketik cari produk..." autocomplete="off">
+        </div>
+      </div>
+
+    </section>
+
+    <section class="container">
+      <div id="productGrid" class="product-grid"></div>
+      <div id="emptyState" class="empty hidden">Belum ada produk yang cocok.</div>
+    </section>
+
+    <section class="reviews-section container">
+      <div class="section-head">
+        <div>
+          <p class="eyebrow">RATING & ULASAN</p>
+          <h2>Pengalaman pembeli</h2>
+        </div>
+        <button id="reviewBtn" class="pink-btn">Tulis ulasan</button>
+      </div>
+      <div id="reviewsList" class="reviews-grid"></div>
+    </section>
+  </main>
+
+  <button id="chatFab" class="chat-fab" aria-label="Buka live chat">
+    <span class="chat-ring"></span><span class="chat-icon">⌁</span>
+  </button>
+
+  <div id="loginModal" class="modal hidden">
+    <div class="modal-card small">
+      <button class="modal-close" data-close="loginModal">×</button>
+      <p class="eyebrow">MASUK</p>
+      <h3>Masukkan username</h3>
+      <p class="muted">Username ini dipakai untuk live chat dan rating.</p>
+      <input id="usernameInput" class="field" maxlength="24" placeholder="Contoh: TamaPlayer">
+      <button id="saveUsername" class="pink-btn full">Lanjutkan</button>
+    </div>
+  </div>
+
+  <div id="productModal" class="modal hidden">
+    <div class="modal-card large">
+      <button class="modal-close" data-close="productModal">×</button>
+      <div id="productModalContent"></div>
+    </div>
+  </div>
+
+  <div id="reviewModal" class="modal hidden">
+    <div class="modal-card small">
+      <button class="modal-close" data-close="reviewModal">×</button>
+      <p class="eyebrow">RATING</p>
+      <h3>Bagaimana pengalaman kamu?</h3>
+      <label class="field-label">Nama / Username
+        <input id="reviewUsername" class="field" maxlength="24" placeholder="Masukkan nama kamu">
+      </label>
+      <div class="star-picker" id="starPicker" aria-label="Pilih rating">
+        <button data-star="1">★</button><button data-star="2">★</button><button data-star="3">★</button><button data-star="4">★</button><button data-star="5" class="active">★</button>
+      </div>
+      <textarea id="reviewText" class="field area" maxlength="300" placeholder="Tulis ulasan..." rows="4"></textarea>
+      <button id="sendReview" class="pink-btn full">Kirim ulasan</button>
+    </div>
+  </div>
+
+  <div id="chatPanel" class="chat-panel hidden">
+    <div class="chat-head">
+      <div><strong>Live Chat TAMA</strong><span class="live-dot">● Online</span></div>
+      <button id="closeChatPanel" class="icon-btn">×</button>
+    </div>
+    <div id="chatGate" class="chat-gate">
+      <div class="chat-bubble-big">💬</div>
+      <h3>Butuh bantuan?</h3>
+      <p class="muted">Masuk dengan username untuk mulai chat admin.</p>
+      <button id="chatStart" class="pink-btn full">Mulai chat</button>
+    </div>
+    <div id="chatBody" class="chat-body hidden">
+      <div class="chat-meta">
+        <select id="chatCategory" class="field">
+          <option value="Pesanan">Pesanan</option>
+          <option value="Pembayaran">Pembayaran</option>
+          <option value="Produk">Produk</option>
+          <option value="Lainnya">Lainnya</option>
+        </select>
+        <button id="newChatBtn" class="text-btn">Chat baru</button>
+      </div>
+      <div id="chatMessages" class="chat-messages"></div>
+      <div id="chatClosed" class="chat-closed hidden">Chat ini sudah diakhiri.</div>
+      <div class="chat-compose">
+        <input id="chatInput" class="field" maxlength="500" placeholder="Tulis pesan...">
+        <button id="sendChat" class="pink-btn">Kirim</button>
+      </div>
+      <button id="endChat" class="end-btn">Akhiri chat</button>
+    </div>
+  </div>
+
+  <footer class="footer container">
+    <span>© <span id="year"></span> TAMA STORE</span>
+    <span>Search to find the product you need.</span>
+  </footer>
+
+  <script src="/js/common.js"></script>
+  <script src="/js/app.js"></script>
+</body>
+</html>
